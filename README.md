@@ -5,7 +5,9 @@
 
 A single-page web app that applies Brooks's Law to the animal kingdom using real gestation periods.
 
-Open `index.html` in a browser. Click **Another Animal** (or press Space) to shuffle.
+Click **Another Animal** (or press Space) to shuffle.
+
+Live at http://brookszoo.online/
 
 ## License
 
