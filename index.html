@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Mythical Mammal-Month</title>
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f0e6;
+            background-image:
+                radial-gradient(ellipse at 20% 50%, rgba(210, 180, 140, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 50%, rgba(210, 180, 140, 0.15) 0%, transparent 50%);
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            color: #2c1810;
+            padding: 1.5rem;
+        }
+
+        .page {
+            max-width: 620px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .book-title {
+            font-size: clamp(1.6rem, 5vw, 2.4rem);
+            font-weight: bold;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            line-height: 1.2;
+            margin-bottom: 0.2rem;
+        }
+
+        .book-subtitle {
+            font-size: clamp(0.85rem, 2.5vw, 1rem);
+            font-style: italic;
+            color: #6b5344;
+            margin-bottom: 2rem;
+        }
+
+        .divider {
+            width: 80px;
+            height: 2px;
+            background: #c0a882;
+            margin: 0 auto 2rem;
+            border: none;
+        }
+
+        .card {
+            background: #fffbf4;
+            border: 1px solid #d9ccb8;
+            border-radius: 6px;
+            padding: 2.5rem 2rem 2rem;
+            box-shadow:
+                0 2px 12px rgba(44, 24, 16, 0.06),
+                0 0 0 4px #f5f0e6,
+                0 0 0 5px #d9ccb8;
+            position: relative;
+        }
+
+        .quote-container {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .quote-container.fading {
+            opacity: 0;
+            transform: translateY(-8px);
+        }
+
+        .emoji {
+            font-size: clamp(3rem, 10vw, 4.5rem);
+            line-height: 1;
+            margin-bottom: 1.2rem;
+            display: block;
+            transition: transform 0.3s ease;
+            cursor: default;
+        }
+
+        .emoji:hover {
+            transform: scale(1.15) rotate(-5deg);
+        }
+
+        .quote {
+            font-size: clamp(1.3rem, 4vw, 1.75rem);
+            line-height: 1.4;
+            margin-bottom: 1.5rem;
+            font-weight: normal;
+        }
+
+        .quote .number {
+            color: #b5351e;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .quote .animal {
+            font-style: italic;
+        }
+
+        .quote .time {
+            white-space: nowrap;
+        }
+
+        .species {
+            font-size: 0.85rem;
+            font-variant: small-caps;
+            letter-spacing: 0.08em;
+            color: #8c7564;
+            margin-bottom: 0.35rem;
+        }
+
+        .gestation {
+            font-size: 0.82rem;
+            color: #9a8778;
+            font-style: italic;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 1.8rem;
+            padding: 0.65rem 1.6rem;
+            background: #5d4037;
+            color: #faf6ee;
+            border: none;
+            border-radius: 4px;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            font-size: 0.95rem;
+            cursor: pointer;
+            letter-spacing: 0.03em;
+            transition: background 0.2s ease, transform 0.1s ease;
+        }
+
+        .btn:hover {
+            background: #3e2723;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .footer {
+            margin-top: 2.2rem;
+            font-size: 0.8rem;
+            color: #a09080;
+            line-height: 1.6;
+        }
+
+        .footer .law {
+            font-style: italic;
+            max-width: 380px;
+            margin: 0 auto 0.4rem;
+        }
+
+        .footer .attribution {
+            font-size: 0.75rem;
+        }
+
+        .paw-tracks {
+            margin-top: 1rem;
+            font-size: 0.7rem;
+            letter-spacing: 0.3em;
+            color: #c8b9a8;
+            user-select: none;
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 1.8rem 1.2rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="book-title">The Mythical Mammal-Month</div>
+        <div class="book-subtitle">Essays on Software Gestation</div>
+        <hr class="divider">
+
+        <div class="card">
+            <div class="quote-container" id="quoteContainer">
+                <span class="emoji" id="emoji"></span>
+                <div class="quote" id="quote"></div>
+                <div class="species" id="species"></div>
+                <div class="gestation" id="gestation"></div>
+            </div>
+            <button class="btn" id="shuffleBtn">Another Animal</button>
+        </div>
+
+        <div class="footer">
+            <div class="law">&ldquo;Adding more animals to a late pregnancy<br>won&rsquo;t make it deliver sooner.&rdquo;</div>
+            <div class="attribution">&mdash; Brooks&rsquo;s Law, Zoological Edition</div>
+            <div class="paw-tracks">🐾 🐾 🐾</div>
+        </div>
+    </div>
+
+    <script>
+        const entries = [
+            // ~22 months (645 days)
+            {
+                emoji: "🐘",
+                count: 22,
+                animal: "elephants",
+                baby: "calf",
+                time: "1 month",
+                species: "African Elephant",
+                gestation: "Gestation: ~22 months (645 days)"
+            },
+            // ~17 months (510 days)
+            {
+                emoji: "🐋",
+                count: 17,
+                animal: "orcas",
+                baby: "calf",
+                time: "1 month",
+                species: "Orca (Killer Whale)",
+                gestation: "Gestation: ~17 months (510 days)"
+            },
+            // ~16 months (480 days)
+            {
+                emoji: "🦏",
+                count: 16,
+                animal: "rhinos",
+                baby: "calf",
+                time: "1 month",
+                species: "White Rhinoceros",
+                gestation: "Gestation: ~16 months (480 days)"
+            },
+            // ~15 months (450 days)
+            {
+                emoji: "🦒",
+                count: 450,
+                animal: "giraffes",
+                baby: "calf",
+                time: "1 day",
+                species: "Giraffe",
+                gestation: "Gestation: ~15 months (420\u2013450 days)"
+            },
+            // ~13 months (390 days)
+            {
+                emoji: "🐫",
+                count: 13,
+                animal: "camels",
+                baby: "calf",
+                time: "1 month",
+                species: "Bactrian Camel",
+                gestation: "Gestation: ~13 months (360\u2013420 days)"
+            },
+            // ~12 months (365 days)
+            {
+                emoji: "🫏",
+                count: 365,
+                animal: "donkeys",
+                baby: "foal",
+                time: "1 day",
+                species: "Donkey",
+                gestation: "Gestation: ~12 months (365 days)"
+            },
+            // ~11.5 months (350 days) - two-toed sloth
+            {
+                emoji: "🦥",
+                count: 350,
+                animal: "sloths",
+                baby: "baby",
+                time: "1 day",
+                species: "Two-Toed Sloth",
+                gestation: "Gestation: ~11.5 months (350 days)"
+            },
+            // ~11 months (335 days)
+            {
+                emoji: "🦙",
+                count: 11,
+                animal: "llamas",
+                baby: "cria",
+                time: "1 month",
+                species: "Llama",
+                gestation: "Gestation: ~11.5 months (345 days)"
+            },
+            // ~11 months (336 days)
+            {
+                emoji: "🐎",
+                count: 11,
+                animal: "horses",
+                baby: "foal",
+                time: "1 month",
+                species: "Horse",
+                gestation: "Gestation: ~11 months (330\u2013342 days)"
+            },
+            // ~10 months (305 days)
+            {
+                emoji: "🐃",
+                count: 305,
+                animal: "water buffalo",
+                baby: "calf",
+                time: "1 day",
+                species: "Water Buffalo",
+                gestation: "Gestation: ~10 months (300\u2013310 days)"
+            },
+            // ~9.5 months (285 days)
+            {
+                emoji: "🐄",
+                count: 285,
+                animal: "cows",
+                baby: "calf",
+                time: "1 day",
+                species: "Cow",
+                gestation: "Gestation: ~9.5 months (279\u2013292 days)"
+            },
+            // ~9 months (276 days)
+            {
+                emoji: "🐬",
+                count: 276,
+                animal: "dolphins",
+                baby: "calf",
+                time: "1 day",
+                species: "Bottlenose Dolphin",
+                gestation: "Gestation: ~9 months (276 days)"
+            },
+            // ~8.5 months (260 days)
+            {
+                emoji: "🦧",
+                count: 260,
+                animal: "orangutans",
+                baby: "infant",
+                time: "1 day",
+                species: "Orangutan",
+                gestation: "Gestation: ~8.5 months (260 days)"
+            },
+            // ~8.5 months (257 days)
+            {
+                emoji: "🦍",
+                count: 257,
+                animal: "gorillas",
+                baby: "infant",
+                time: "1 day",
+                species: "Gorilla",
+                gestation: "Gestation: ~8.5 months (255\u2013260 days)"
+            },
+            // ~8 months (245 days)
+            {
+                emoji: "🫎",
+                count: 8,
+                animal: "moose",
+                baby: "calf",
+                time: "1 month",
+                species: "Moose",
+                gestation: "Gestation: ~8 months (230\u2013250 days)"
+            },
+            // ~8 months (241 days)
+            {
+                emoji: "🐻‍❄️",
+                count: 241,
+                animal: "polar bears",
+                baby: "cub",
+                time: "1 day",
+                species: "Polar Bear",
+                gestation: "Gestation: ~8 months (241 days)"
+            },
+            // ~8 months (237 days)
+            {
+                emoji: "🐵",
+                count: 237,
+                animal: "chimpanzees",
+                baby: "infant",
+                time: "1 day",
+                species: "Chimpanzee",
+                gestation: "Gestation: ~8 months (230\u2013250 days)"
+            },
+            // ~8 months (238 days)
+            {
+                emoji: "🦛",
+                count: 238,
+                animal: "hippos",
+                baby: "calf",
+                time: "1 day",
+                species: "Hippopotamus",
+                gestation: "Gestation: ~8 months (225\u2013250 days)"
+            },
+            // ~7 months (220 days)
+            {
+                emoji: "🐻",
+                count: 220,
+                animal: "black bears",
+                baby: "cub",
+                time: "1 day",
+                species: "Black Bear",
+                gestation: "Gestation: ~7 months (220 days)"
+            },
+            // ~7 months (217 days)
+            {
+                emoji: "🦬",
+                count: 217,
+                animal: "bison",
+                baby: "calf",
+                time: "1 day",
+                species: "American Bison",
+                gestation: "Gestation: ~7 months (217 days)"
+            },
+            // ~7 months (201 days)
+            {
+                emoji: "🦌",
+                count: 201,
+                animal: "deer",
+                baby: "fawn",
+                time: "1 day",
+                species: "White-Tailed Deer",
+                gestation: "Gestation: ~7 months (201 days)"
+            },
+            // ~6 months (187 days)
+            {
+                emoji: "🐒",
+                count: 187,
+                animal: "baboons",
+                baby: "infant",
+                time: "1 day",
+                species: "Baboon",
+                gestation: "Gestation: ~6 months (187 days)"
+            },
+            // ~5 months (150 days)
+            {
+                emoji: "🐐",
+                count: 21,
+                animal: "goats",
+                baby: "kid",
+                time: "1 week",
+                species: "Domestic Goat",
+                gestation: "Gestation: ~5 months (145\u2013155 days)"
+            },
+            // ~5 months (147 days)
+            {
+                emoji: "🐑",
+                count: 21,
+                animal: "sheep",
+                baby: "lamb",
+                time: "1 week",
+                species: "Domestic Sheep",
+                gestation: "Gestation: ~5 months (144\u2013151 days)"
+            },
+            // ~4.5 months (135 days)
+            {
+                emoji: "🐼",
+                count: 135,
+                animal: "pandas",
+                baby: "cub",
+                time: "1 day",
+                species: "Giant Panda",
+                gestation: "Gestation: ~3\u20135 months (95\u2013160 days)"
+            },
+            // ~4 months (122 days)
+            {
+                emoji: "🦫",
+                count: 122,
+                animal: "beavers",
+                baby: "kit",
+                time: "1 day",
+                species: "Beaver",
+                gestation: "Gestation: ~4 months (122 days)"
+            },
+            // ~3.8 months (114 days)
+            {
+                emoji: "🐖",
+                count: 114,
+                animal: "pigs",
+                baby: "piglet",
+                time: "1 day",
+                species: "Domestic Pig",
+                gestation: "Gestation: 3 months, 3 weeks, & 3 days (114 days)"
+            },
+            // ~3.5 months (109 days)
+            {
+                emoji: "🐅",
+                count: 109,
+                animal: "tigers",
+                baby: "cub",
+                time: "1 day",
+                species: "Tiger",
+                gestation: "Gestation: ~3.5 months (105\u2013113 days)"
+            },
+            // ~3.5 months (108 days)
+            {
+                emoji: "🦁",
+                count: 108,
+                animal: "lions",
+                baby: "cub",
+                time: "1 day",
+                species: "Lion",
+                gestation: "Gestation: ~3.5 months (108 days)"
+            },
+            // ~3 months (93 days)
+            {
+                emoji: "🐆",
+                count: 93,
+                animal: "leopards",
+                baby: "cub",
+                time: "1 day",
+                species: "Leopard",
+                gestation: "Gestation: ~3 months (92\u201395 days)"
+            },
+            // ~2 months (65 days)
+            {
+                emoji: "🐺",
+                count: 9,
+                animal: "wolves",
+                baby: "pup",
+                time: "1 week",
+                species: "Gray Wolf",
+                gestation: "Gestation: ~2 months (60\u201368 days)"
+            },
+            // ~9 weeks (64 days)
+            {
+                emoji: "🐱",
+                count: 9,
+                animal: "cats",
+                baby: "kitten",
+                time: "1 week",
+                species: "Domestic Cat",
+                gestation: "Gestation: ~9 weeks (58\u201367 days)"
+            },
+            // ~9 weeks (63 days)
+            {
+                emoji: "🦝",
+                count: 9,
+                animal: "raccoons",
+                baby: "kit",
+                time: "1 week",
+                species: "Raccoon",
+                gestation: "Gestation: ~9 weeks (63 days)"
+            },
+            // ~2 months (61 days)
+            {
+                emoji: "🐕",
+                count: 61,
+                animal: "dogs",
+                baby: "puppy",
+                time: "1 day",
+                species: "Domestic Dog",
+                gestation: "Gestation: ~2 months (58\u201365 days)"
+            },
+            // ~8 weeks (57 days)
+            {
+                emoji: "🦊",
+                count: 8,
+                animal: "foxes",
+                baby: "kit",
+                time: "1 week",
+                species: "Red Fox",
+                gestation: "Gestation: ~8 weeks (52\u201357 days)"
+            },
+            // ~6 weeks (42 days)
+            {
+                emoji: "🦘",
+                count: 6,
+                animal: "kangaroos",
+                baby: "joey",
+                time: "1 week",
+                species: "Kangaroo",
+                gestation: "Gestation: ~6 weeks (42 days)"
+            },
+            // ~35 days
+            {
+                emoji: "🐨",
+                count: 35,
+                animal: "koalas",
+                baby: "joey",
+                time: "1 day",
+                species: "Koala",
+                gestation: "Gestation: ~35 days (then 6 months in pouch)"
+            },
+            // ~35 days
+            {
+                emoji: "🦔",
+                count: 5,
+                animal: "hedgehogs",
+                baby: "hoglet",
+                time: "1 week",
+                species: "European Hedgehog",
+                gestation: "Gestation: ~5 weeks (35 days)"
+            },
+            // ~31 days
+            {
+                emoji: "🐰",
+                count: 31,
+                animal: "rabbits",
+                baby: "kit",
+                time: "1 day",
+                species: "Domestic Rabbit",
+                gestation: "Gestation: ~1 month (28\u201335 days)"
+            },
+            // ~31 days
+            {
+                emoji: "🐿️",
+                count: 31,
+                animal: "chipmunks",
+                baby: "pup",
+                time: "1 day",
+                species: "Chipmunk",
+                gestation: "Gestation: ~1 month (31 days)"
+            },
+            // ~22 days
+            {
+                emoji: "🐀",
+                count: 22,
+                animal: "rats",
+                baby: "pup",
+                time: "1 day",
+                species: "Rat",
+                gestation: "Gestation: ~3 weeks (21\u201323 days)"
+            },
+            // ~20 days
+            {
+                emoji: "🐹",
+                count: 20,
+                animal: "hamsters",
+                baby: "pup",
+                time: "1 day",
+                species: "Hamster",
+                gestation: "Gestation: ~16\u201323 days"
+            },
+            // ~19 days
+            {
+                emoji: "🐭",
+                count: 19,
+                animal: "mice",
+                baby: "pup",
+                time: "1 day",
+                species: "Mouse",
+                gestation: "Gestation: ~19 days"
+            }
+        ];
+
+        let currentIndex = -1;
+
+        function pickRandom() {
+            let next;
+            do {
+                next = Math.floor(Math.random() * entries.length);
+            } while (next === currentIndex && entries.length > 1);
+            currentIndex = next;
+            return entries[next];
+        }
+
+        function render(entry) {
+            document.getElementById("emoji").textContent = entry.emoji;
+            document.getElementById("quote").innerHTML =
+                `<span class="number">${entry.count}</span> ` +
+                `<span class="animal">${entry.animal}</span> ` +
+                `can\u2019t make a ${entry.baby} in ` +
+                `<span class="time">${entry.time}</span>.`;
+            document.getElementById("species").textContent = entry.species;
+            document.getElementById("gestation").textContent = entry.gestation;
+        }
+
+        function shuffle() {
+            const container = document.getElementById("quoteContainer");
+            container.classList.add("fading");
+
+            setTimeout(() => {
+                render(pickRandom());
+                container.classList.remove("fading");
+            }, 300);
+        }
+
+        // Initial render
+        render(pickRandom());
+
+        document.getElementById("shuffleBtn").addEventListener("click", shuffle);
+
+        // Keyboard shortcut: spacebar or Enter to shuffle
+        document.addEventListener("keydown", (e) => {
+            if (e.key === " " || e.key === "Enter") {
+                if (e.target.tagName !== "BUTTON") {
+                    e.preventDefault();
+                    shuffle();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
