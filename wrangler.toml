@@ -1,0 +1,15 @@
+# brookszoo.pid1.space -- the one static page, on Cloudflare.
+#
+# The repo is archived, so nothing deploys on push. Deploy by hand from a
+# clone with `npx wrangler deploy`. .assetsignore keeps everything except
+# index.html off the site.
+
+name = "brookszoo"
+compatibility_date = "2026-09-11"
+
+[assets]
+directory = "."
+
+[[routes]]
+pattern = "brookszoo.pid1.space"
+custom_domain = true

@@ -11,7 +11,8 @@
 - The repo has no package manager, no lockfile and no runtime pin. The site is the single file index.html with inline CSS and JavaScript, and it loads no external resources.
 
 ### Deploys outside CI
-- None. .github/workflows/static.yaml deploys the whole repo root to GitHub Pages on every push to main, so every file in the root is public on the site.
+- brookszoo.pid1.space is a Cloudflare Worker with static assets, set up in wrangler.toml. Nothing deploys it on push: run `npx wrangler deploy` by hand from a clone. .assetsignore limits the site to index.html.
+- .github/workflows/static.yaml deploys the whole repo root to GitHub Pages on every push to main, so every file in the root is public on the site.
 
 ### Security notes
 - Semgrep scans index.html with HTML rules only. It does not parse the inline `<script>` block as JavaScript, so no JavaScript rule covers the site's code.

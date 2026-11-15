@@ -7,7 +7,7 @@ A single-page web app that applies Brooks's Law to the animal kingdom using real
 
 Click **Another Animal** (or press Space) to shuffle.
 
-Live at https://brookszoo.online/
+Live at https://brookszoo.pid1.space/
 
 ## License
 

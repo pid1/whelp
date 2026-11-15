@@ -1,0 +1,3 @@
+# Only index.html is public.
+*
+!index.html
